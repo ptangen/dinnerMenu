@@ -26,7 +26,8 @@ class MyMenuViewController: UIViewController, MyMenuViewDelegate {
         
         // add the select recipe button to the nav bar
         let selectRecipeButton = UIBarButtonItem(title: "Select Recipes", style: .plain, target: self, action: #selector(goToHome))
-        navigationItem.leftBarButtonItems = [selectRecipeButton]
+        self.navigationItem.rightBarButtonItems = [selectRecipeButton]
+        self.navigationItem.setHidesBackButton(true, animated:false);
   
         // set color and font size of nav bar buttons
         let labelFont : UIFont = UIFont(name: Constants.appFont.regular.rawValue, size: CGFloat(Constants.fontSize.xsmall.rawValue))!
@@ -57,6 +58,10 @@ class MyMenuViewController: UIViewController, MyMenuViewDelegate {
             })
             store.showNotification = false  // only show notification when user enters the app
         }
+        
+        if store.recipesSelected.count == 0 {
+            self.clearAllRecipes()
+        }
     }
     
     override func viewWillAppear(_ animated: Bool = false) {
@@ -66,7 +71,7 @@ class MyMenuViewController: UIViewController, MyMenuViewDelegate {
         
         let color = UIColor(red: 0.875, green: 0.855, blue: 0.773, alpha: 1.000)
         let textStyle = NSMutableParagraphStyle()
-        let textFontAttributes = [NSFontAttributeName: UIFont(name: "GillSans-Bold", size: 25)!, NSForegroundColorAttributeName: color, NSParagraphStyleAttributeName: textStyle]
+        let textFontAttributes = [NSFontAttributeName: UIFont(name: Constants.appFont.bold.rawValue, size: Constants.fontSize.large.rawValue)!, NSForegroundColorAttributeName: color, NSParagraphStyleAttributeName: textStyle]
         self.navigationController?.navigationBar.titleTextAttributes = textFontAttributes
     }
 
@@ -96,6 +101,7 @@ class MyMenuViewController: UIViewController, MyMenuViewDelegate {
     
     func goToRecipe(){ 
         let traditionalRecipeViewController1 = TraditionalRecipeViewController()
+        traditionalRecipeViewController1.cameFromVC = "menu"
         traditionalRecipeViewController1.recipe = self.myMenuViewInst.recipeForTraditionalRecipeView
         navigationController?.pushViewController(traditionalRecipeViewController1, animated: true) // show destination with nav bar
     }

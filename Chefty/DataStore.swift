@@ -34,6 +34,7 @@ class DataStore {
     var earliestPossibleServeTime: Date = Date()
     
     var showNotification = false
+    var tabSelectedOnMain = 0
     
     func populateHomeArrays () {
         for recipe in recipes {
@@ -48,7 +49,6 @@ class DataStore {
             }
         }
     }
-    
     
     func getRecipesFromDB(completion: @escaping () -> ()) {
         CheftyAPIClient.getRecipiesFromDB {_ in
@@ -140,7 +140,6 @@ class DataStore {
         }
     }
     
-    
     //Merged Steps Set Up
     func getStepsFromRecipesSelected(completion: @escaping () -> ()) {
         self.recipeSteps.removeAll()
@@ -158,7 +157,6 @@ class DataStore {
             })
         }
     }
-    
     
     func mergeRecipeSteps() {
         

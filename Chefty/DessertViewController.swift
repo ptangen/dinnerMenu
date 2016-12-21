@@ -15,7 +15,6 @@ class DessertViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         let layout = CustomLayoutView()
         let frame = CGRect(x: view.bounds.minX, y: view.bounds.minY, width: view.bounds.width, height: view.bounds.height * 0.80)
         collectionView = UICollectionView(frame: frame, collectionViewLayout: layout)
@@ -24,23 +23,19 @@ class DessertViewController: UIViewController {
         collectionView.dataSource = self
         collectionView.backgroundColor = UIColor.clear
         view.addSubview(collectionView)
-        
     }
     
-       
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.collectionView.reloadData()
+        self.store.tabSelectedOnMain = 3
     }
-    
 }
 
 extension DessertViewController : UICollectionViewDelegate, UICollectionViewDataSource {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        
         return store.desserts.count
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
@@ -55,7 +50,6 @@ extension DessertViewController : UICollectionViewDelegate, UICollectionViewData
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
         let recipeCell = cell as! RecipeCollectionViewCell
-        
         let interval = Double(indexPath.row)
         
         if (collectionView.frame.intersects(cell.frame)) {
@@ -77,25 +71,19 @@ extension DessertViewController : UICollectionViewDelegate, UICollectionViewData
         })
         
         if store.recipesSelected.contains(recipeCell.recipe!) {
-            
-            recipeCell.layer.borderColor = UIColor.blue.cgColor
+            let blue = UIColor(red: 35/255, green: 132/255, blue: 247/255, alpha: 1.0)
+            recipeCell.layer.borderColor = blue.cgColor
             recipeCell.layer.borderWidth = 5.0
             recipeCell.alpha = 1.0
-            
         } else {
             recipeCell.layer.borderWidth = 0.0
         }
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
-        let testView = TraditionalRecipeViewController()
-        testView.recipe = store.desserts[indexPath.row]
-        testView.modalTransitionStyle = .crossDissolve
-        present(testView, animated: true, completion: nil)
-        
+        let recipeView = TraditionalRecipeViewController()
+        recipeView.cameFromVC = "main"
+        recipeView.recipe = store.desserts[indexPath.row]
+        navigationController?.pushViewController(recipeView, animated: true)
     }
-
-    
-    
 }

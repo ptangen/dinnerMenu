@@ -14,8 +14,9 @@ class IngredientsTableViewCell: UITableViewCell {
     let uncheckedBox: UIImage = UIImage()
     let checkedBox: UIImage = UIImage()
     
-    
-    required init(coder aDecoder: NSCoder) { fatalError("init(coder:)") }
+    required init(coder aDecoder: NSCoder) {
+        fatalError("init(coder:)")
+    }
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -39,8 +40,6 @@ class IngredientsTableViewCell: UITableViewCell {
         textLabel?.rightAnchor.constraint(equalTo: self.rightAnchor, constant: -3).isActive = true
         textLabel?.translatesAutoresizingMaskIntoConstraints = false
         textLabel?.adjustsFontSizeToFitWidth = true
-       
     }
-    
 }
 

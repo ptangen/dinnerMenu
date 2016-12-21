@@ -183,7 +183,7 @@ class TraditionalRecipeView: UIView {
         
         durationLabel.font = UIFont(name: Constants.appFont.light.rawValue, size: 20)
         durationLabel.text = "\(totalTimeString)"
-        durationLabel.font = UIFont(name: "GillSans-Light", size: 20)
+        durationLabel.font = UIFont(name: Constants.appFont.light.rawValue, size: 20)
         durationLabel.textAlignment = .left
         
         self.myScrollView.addSubview(servingSizeLabel)

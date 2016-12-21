@@ -17,7 +17,6 @@ class CheftyAPIClient {
         let urlString = "\(Secrets.cheftyAPIURL)/getRecipes.php?key=\(Secrets.cheftyKey)"
         let url = URL(string: urlString)
         
-        
         if let unwrappedUrl = url{
             let session = URLSession.shared
             let task = session.dataTask(with: unwrappedUrl) { (data, response, error) in

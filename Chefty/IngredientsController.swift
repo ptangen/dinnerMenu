@@ -89,7 +89,6 @@ class IngredientsController: UIViewController, UITableViewDataSource, UITableVie
         super.didReceiveMemoryWarning()
     }
 
-
     func numberOfSections(in tableView: UITableView) -> Int {
         return store.recipesSelected.count
     }

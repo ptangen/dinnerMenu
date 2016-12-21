@@ -15,22 +15,24 @@ class FinalMainViewController: UIViewController {
     var controller: SegmentedControl!
     var presentingVC : UIViewController!
     var store = DataStore.sharedInstance
-    var previousSelectedSegment = 1
-    var selectedRecipeIcon : CookButton!
+    var previousSelectedTab : Int?
+    var openMenuButton : UIBarButtonItem!
     
     override func viewDidLoad() {
+        self.previousSelectedTab = 0
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         setupView()
         self.navigationItem.setHidesBackButton(true, animated: false)
-       
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        // enable/disable open menu button
         if store.recipesSelected.count == 0 {
-            selectedRecipeIcon.alpha = 0.6
-        } else { selectedRecipeIcon.alpha = 1.0 }
+            self.openMenuButton.isEnabled = false
+        } else {
+            self.openMenuButton.isEnabled = true
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -40,10 +42,12 @@ class FinalMainViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.reloadInputViews()
+        // enable/disable open menu button
         if store.recipesSelected.count == 0 {
-            selectedRecipeIcon.alpha = 0.6
-        } else { selectedRecipeIcon.alpha = 1.0 }
-        
+            self.openMenuButton.isEnabled = false
+        } else {
+            self.openMenuButton.isEnabled = true
+        }
     }
     
     private func setupView() {
@@ -52,21 +56,17 @@ class FinalMainViewController: UIViewController {
         updateView()
     }
     
-    
     private func setupElements() {
-        
         self.edgesForExtendedLayout = .bottom
         self.extendedLayoutIncludesOpaqueBars = true
         
-        //Setup navigation Buttons
-        selectedRecipeIcon = CookButton(frame: CGRect(x: 0, y: 0, width: 50, height: 50))
-        let selectedRecipeButton = UIBarButtonItem()
-        selectedRecipeButton.customView = selectedRecipeIcon
-        let tap = UITapGestureRecognizer(target: self, action: #selector(self.cookButtonTapped(sender:)))
-        tap.numberOfTapsRequired = 1
-        selectedRecipeIcon.addGestureRecognizer(tap)
+        // set up the nav bar
+        self.openMenuButton = UIBarButtonItem(title: "Open Menu", style: .plain, target: self, action: #selector(self.openMenuTapped))
+        navigationItem.rightBarButtonItem = self.openMenuButton
+        let labelFont : UIFont = UIFont(name: Constants.appFont.regular.rawValue, size: CGFloat(Constants.fontSize.xsmall.rawValue))!
+        let attributesNormal = [ NSFontAttributeName : labelFont ]
+        self.openMenuButton.setTitleTextAttributes(attributesNormal, for: .normal)
         
-        navigationItem.rightBarButtonItem = selectedRecipeButton
         navigationItem.titleView = CheftyTitleView(frame: CGRect(x: 0, y: 0, width: 160, height: 50))
         navigationItem.titleView?.backgroundColor = UIColor.clear
         
@@ -88,7 +88,6 @@ class FinalMainViewController: UIViewController {
         controller.heightAnchor.constraint(equalToConstant: 50).isActive = true
         controller.translatesAutoresizingMaskIntoConstraints = false
         
-        
         containerView = UIView()
         view.addSubview(containerView)
         containerView.topAnchor.constraint(equalTo: bgView.bottomAnchor).isActive = true
@@ -96,13 +95,12 @@ class FinalMainViewController: UIViewController {
         containerView.leftAnchor.constraint(equalTo: view.leftAnchor).isActive = true
         containerView.rightAnchor.constraint(equalTo: view.rightAnchor).isActive = true
         containerView.translatesAutoresizingMaskIntoConstraints = false
-        
     }
     
     private func setupSegmentedControl() {
         
         controller.addTarget(self, action: #selector(selectionDidChange(sender:)), for: .valueChanged)
-        controller.selectedIndex = 0
+        controller.selectedIndex = self.store.tabSelectedOnMain
     }
     
     func selectionDidChange(sender: UIControl) {
@@ -167,40 +165,31 @@ class FinalMainViewController: UIViewController {
     private func updateView() {
         
         switch controller.selectedIndex {
-            
         case 0 :
-            if previousSelectedSegment == controller.selectedIndex { return }
             setupRecipeView(remove: presentingVC, add: mainDishVC)
             
         case 1 :
-            if previousSelectedSegment == controller.selectedIndex { return }
             setupRecipeView(remove: presentingVC, add: appetizerVC)
             
         case 2 :
-            if previousSelectedSegment == controller.selectedIndex { return }
             setupRecipeView(remove: presentingVC, add: sidesVC)
             
         case 3 :
-            if previousSelectedSegment == controller.selectedIndex { return }
             setupRecipeView(remove: presentingVC, add: dessertVC)
-            
-            
+
         default : break
             
         }
     }
     
     private func setupRecipeView(remove presentingViewController: UIViewController?, add newViewController: UIViewController) {
-        
         add(asChildViewController: newViewController)
         if let presentingViewController = presentingViewController {
             animateTransition(from: presentingViewController, to: newViewController)
             remove(asChildViewController: presentingViewController)
         }
         presentingVC = newViewController
-        previousSelectedSegment = controller.selectedIndex
     }
-    
     
     private func animateTransition(from presentingViewController: UIViewController, to newViewController: UIViewController) {
         
@@ -211,14 +200,12 @@ class FinalMainViewController: UIViewController {
             presentingViewController.view.alpha = 0.0
             
         }, completion: nil)
-        
     }
     
-    func cookButtonTapped(sender: UIBarButtonItem) {
+    func openMenuTapped() {
         if self.store.recipesSelected.isEmpty == false {
             let myMenu = MyMenuViewController()
             navigationController?.pushViewController(myMenu, animated: true)
         }
     }
-    
 }

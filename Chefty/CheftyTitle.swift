@@ -28,11 +28,11 @@ public class CheftyTitle : NSObject {
         let color = UIColor(red: 0.875, green: 0.855, blue: 0.773, alpha: 1.000)
         
         //// Text Drawing
-        let textRect = CGRect(x: 10, y: 34, width: 221, height: 54)
-        let textTextContent = "CHEFTY"
+        let textRect = CGRect(x: 10, y: 30, width: 221, height: 54)
+        let textTextContent = "Dinner Menu"
         let textStyle = NSMutableParagraphStyle()
         textStyle.alignment = .left
-        let textFontAttributes = [NSFontAttributeName: UIFont(name: "GillSans-Bold", size: 50)!, NSForegroundColorAttributeName: color, NSParagraphStyleAttributeName: textStyle]
+        let textFontAttributes = [NSFontAttributeName: UIFont(name: Constants.appFont.bold.rawValue, size: Constants.fontSize.xlarge.rawValue)!, NSForegroundColorAttributeName: color, NSParagraphStyleAttributeName: textStyle]
         
         let textTextHeight: CGFloat = textTextContent.boundingRect(with: CGSize(width: textRect.width, height: CGFloat.infinity), options: .usesLineFragmentOrigin, attributes: textFontAttributes, context: nil).height
         context.saveGState()
@@ -43,9 +43,6 @@ public class CheftyTitle : NSObject {
         context.restoreGState()
         
     }
-    
-    
-    
     
     @objc public enum ResizingBehavior: Int {
         case aspectFit /// The content is proportionally resized to fit into the target rectangle.

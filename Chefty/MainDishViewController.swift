@@ -7,17 +7,14 @@
 //
 
 import UIKit
-protocol MainDishViewDelegate: class {
-    func goToRecipe()
-}
 
-class MainDishViewController: UIViewController, RecipeViewDelegate {
+
+class MainDishViewController: UIViewController {
 
     var store = DataStore.sharedInstance
     var collectionView : UICollectionView!
     var selectedRecipe : Recipe?
     var selectedRecipeStatus = false
-    weak var delegate: MainDishViewDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,8 +24,8 @@ class MainDishViewController: UIViewController, RecipeViewDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         self.collectionView.reloadData()
+        self.store.tabSelectedOnMain = 0
     }
-   
 }
 
 extension MainDishViewController : UICollectionViewDelegate, UICollectionViewDataSource {
@@ -49,7 +46,6 @@ extension MainDishViewController : UICollectionViewDelegate, UICollectionViewDat
         view.addSubview(collectionView)
     }
     
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return store.main.count
     }
@@ -60,16 +56,14 @@ extension MainDishViewController : UICollectionViewDelegate, UICollectionViewDat
         cell.recipe = store.main[indexPath.row]
         cell.recipeLabel.text = store.main[indexPath.row].displayName
         cell.imageView.sd_setImage(with: url!)
-        
-        
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
         
         let recipeCell = cell as! RecipeCollectionViewCell
-        
         let interval = Double(indexPath.row)
+        
         if (collectionView.frame.intersects(cell.frame)) {
             cell.alpha = 0.0
             cell.center.y = cell.center.y - 30
@@ -89,26 +83,21 @@ extension MainDishViewController : UICollectionViewDelegate, UICollectionViewDat
         })
         
         if store.recipesSelected.contains(recipeCell.recipe!) {
-            
-            recipeCell.layer.borderColor = UIColor.blue.cgColor
+            let blue = UIColor(red: 35/255, green: 132/255, blue: 247/255, alpha: 1.0)
+            recipeCell.layer.borderColor = blue.cgColor
             recipeCell.layer.borderWidth = 5.0
             recipeCell.alpha = 1.0
-            
+    
         } else {
             recipeCell.layer.borderWidth = 0.0
         }
-        
-        
-        
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        
         let recipeView = TraditionalRecipeViewController()
-        recipeView.modalTransitionStyle = .crossDissolve
+        recipeView.cameFromVC = "main"
         recipeView.recipe = store.main[indexPath.row]
-        present(recipeView, animated: true, completion: nil)
-        
+        navigationController?.pushViewController(recipeView, animated: true)
     }
     
 }

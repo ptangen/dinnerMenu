@@ -99,7 +99,7 @@ class APITests: XCTestCase {
             var steps = recipeForTesting.steps?.allObjects as! [Step]
             steps = steps.sorted(by: { $0.timeToStart < $1.timeToStart } )
             let ingredientsFirstStepCount = steps.first?.ingredients?.allObjects.count
-            XCTAssert(ingredientsFirstStepCount == 5) // the first step of apple pie has 5 ingredients
+            XCTAssert(ingredientsFirstStepCount == 4) // the first step of apple pie has 4 ingredients
         }
     }
 }

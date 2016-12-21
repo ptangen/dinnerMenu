@@ -11,7 +11,6 @@ import Foundation
 struct Secrets {
     
     static let cheftyAPIURL:String = "http://api.ptangen.com"
-    static let cheftyAPImetadata:String = "https://cheftyapi.herokuapp.com/recipeMetadata"
     static let cheftyImageDir:String = "http://api.ptangen.com/images/"
     static let cheftyKey:String = "flatiron0916"
     
