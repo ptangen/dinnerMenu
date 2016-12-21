@@ -17,4 +17,4 @@ Plus, customize your meal prep by choosing a target serving time, and Dinner Men
 
 ###Let's start cooking!
 
-![Alt text](/screenshots/01.png?raw=true "Main Page")
+![Alt text](/screenshots/dinnerMenuSmall.png?raw=true "Main Page")
