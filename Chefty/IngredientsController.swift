@@ -127,7 +127,6 @@ class IngredientsController: UIViewController, UITableViewDataSource, UITableVie
 
         let cell = IngredientsTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "listCell")
 
-        print("cellForRowAt indexPath.section = \(indexPath.section) , cellForRowAt indexPath.row = \(indexPath.row)")
         guard let recipe = store.recipesSelected[indexPath.section].displayName else { return cell }
         guard let ingredients = ingredientsPerRecipe[recipe] else { return cell }
         let ingredient = ingredients[indexPath.row]
