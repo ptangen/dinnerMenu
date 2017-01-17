@@ -50,7 +50,7 @@
     }
     
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
     }
     
     // get data
@@ -77,9 +77,11 @@
         if let ingredientsAny = self.store.mergedStepsArray[UserDefaults.standard.integer(forKey: "stepCurrent")-1].ingredients {
             let ingredientsArr = ingredientsAny.allObjects as? [Ingredient]
             if ingredientsArr?.isEmpty == false {
-                for ingredient in ingredientsArr! {
-                    if let desc = ingredient.ingredientDescription {
-                        self.ingredients += "- \(desc)\n"
+                if let ingredientsArr = ingredientsArr {
+                    for ingredient in ingredientsArr {
+                        if let desc = ingredient.ingredientDescription {
+                            self.ingredients += "- \(desc)\n"
+                        }
                     }
                 }
             }
@@ -108,7 +110,7 @@
         self.stepTitleLabel.textAlignment = .center
         self.stepTitleLabel.textColor = UIColor(red: 255/255, green: 255/255, blue: 238/255, alpha: 1.0)
         self.stepTitleLabel.font = UIFont(name: Constants.appFont.light.rawValue, size: 30)
-        self.stepTitleLabel.backgroundColor = UIColor(named: UIColor.ColorName(rawValue: UIColor.ColorName.deepPurple.rawValue)!)
+        self.stepTitleLabel.backgroundColor = UIColor(named: .deepPurple)
         
         self.addSubview(self.stepTitleLabel)
         
@@ -179,7 +181,7 @@
         self.procedureTitle.text = "Procedure"
         self.procedureTitle.textAlignment = .center
         self.procedureTitle.font =  UIFont(name: Constants.appFont.light.rawValue, size: 25)
-        self.procedureTitle.backgroundColor = UIColor(named: UIColor.ColorName(rawValue: UIColor.ColorName.headingbackground.rawValue)!)
+        self.procedureTitle.backgroundColor = UIColor(named: .headingbackground)
         self.procedureTitle.textColor = UIColor(red: 255/255, green: 255/255, blue: 238/255, alpha: 1.0)
         
         self.addSubview(self.procedureTitle)
@@ -209,7 +211,9 @@
     }
     
     func createDoneButton() {
-        self.doneButton.titleLabel!.font =  UIFont(name: "GillSans-Bold", size: Constants.fontSize.small.rawValue)
+        if let titleLabel = self.doneButton.titleLabel {
+            titleLabel.font =  UIFont(name: "GillSans-Bold", size: Constants.fontSize.small.rawValue)
+        }
         self.doneButton.addTarget(self, action: #selector(SingleStepView.onClickNextStep), for: .touchUpInside)
         if UserDefaults.standard.integer(forKey: "stepCurrent") == self.store.mergedStepsArray.count { // if on the last step, disable to next step button
             self.doneButton.isEnabled = false

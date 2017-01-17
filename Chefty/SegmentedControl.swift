@@ -51,12 +51,6 @@ class SegmentedControl : UIControl {
         }
     }
     
-    //    @IBInspectable var font : UIFont! = UIFont(name: "GillSans-Light", size: 15) {
-    //        didSet {
-    //            setFont()
-    //        }
-    //    }
-    
     override init(frame: CGRect) {
         super.init(frame: frame)
         setupView()

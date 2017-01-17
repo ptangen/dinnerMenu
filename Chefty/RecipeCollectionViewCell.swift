@@ -12,9 +12,9 @@ import AVFoundation
 
 class RecipeCollectionViewCell: UICollectionViewCell {
  
-    var imageView : UIImageView!
-    var gradientView : GradientView!
-    var recipeLabel : UILabel!
+    var imageView = UIImageView()
+    var gradientView = GradientView()
+    var recipeLabel = UILabel()
     var isButtonPressed = false
     var recipe : Recipe?
     var store = DataStore.sharedInstance

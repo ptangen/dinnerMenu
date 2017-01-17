@@ -37,25 +37,31 @@ class IngredientsController: UIViewController, UITableViewDataSource, UITableVie
 
             CheftyAPIClient.getStepsAndIngredients(recipe: recipeSelected, completion: {
                 
-                for step in recipeSelected.steps! {
+                if let steps = recipeSelected.steps {
+                    for step in steps {
 
-                    let singleStep = step as! Step
+                        let singleStep = step as? Step
 
-                    if let ingredients = singleStep.ingredients {
+                        if let ingredients = singleStep?.ingredients {
 
-                        for ingredient in ingredients {
+                            for ingredient in ingredients {
                             
-                            let singleIngredient = ingredient as! Ingredient
-                            ingredientsToCollect.append(singleIngredient)
-
+                                let singleIngredient = ingredient as? Ingredient
+                                
+                                if let singleIngredient = singleIngredient {
+                                    ingredientsToCollect.append(singleIngredient)
+                                }
+                            }
                         }
                     }
-                }
-
-                self.ingredientsPerRecipe.updateValue(ingredientsToCollect, forKey: recipeDisplayName!)
+                    
+                    if let recipeDisplayName = recipeDisplayName {
+                        self.ingredientsPerRecipe.updateValue(ingredientsToCollect, forKey: recipeDisplayName)
+                    }
                 
-                OperationQueue.main.addOperation {
-                    self.tableView.reloadData()
+                    OperationQueue.main.addOperation {
+                        self.tableView.reloadData()
+                    }
                 }
             })
         }
@@ -103,7 +109,7 @@ class IngredientsController: UIViewController, UITableViewDataSource, UITableVie
 
     func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
         let header: UITableViewHeaderFooterView = view as! UITableViewHeaderFooterView
-        header.contentView.backgroundColor = UIColor(named: UIColor.ColorName(rawValue: UIColor.ColorName.deepPurple.rawValue)!)
+        header.contentView.backgroundColor = UIColor(named: .deepPurple)
         header.textLabel?.textColor = UIColor(red: 255/255, green: 255/255, blue: 238/255, alpha: 1.0)
         header.textLabel?.font = UIFont(name: "GillSans-Light", size: 24)
         header.alpha = 0.8
@@ -121,6 +127,7 @@ class IngredientsController: UIViewController, UITableViewDataSource, UITableVie
 
         let cell = IngredientsTableViewCell(style: UITableViewCellStyle.default, reuseIdentifier: "listCell")
 
+        print("cellForRowAt indexPath.section = \(indexPath.section) , cellForRowAt indexPath.row = \(indexPath.row)")
         guard let recipe = store.recipesSelected[indexPath.section].displayName else { return cell }
         guard let ingredients = ingredientsPerRecipe[recipe] else { return cell }
         let ingredient = ingredients[indexPath.row]

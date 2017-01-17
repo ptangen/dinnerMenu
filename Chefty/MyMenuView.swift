@@ -67,15 +67,17 @@ class MyMenuView: UIView, UITableViewDelegate, UITableViewDataSource, MyMenuTabl
         
         // set serving time to 7pm or earliest serving time, whichever is later
         if let recipeSelected = store.recipesSelected.first {
-            if (recipeSelected.servingTime?.timeIntervalSince1970)! < store.earliestPossibleServeTime.timeIntervalSince1970 && UserDefaults.standard.integer(forKey: "stepCurrent") == 0 {
+            if let servingTime = (recipeSelected.servingTime?.timeIntervalSince1970) {
+                if servingTime < store.earliestPossibleServeTime.timeIntervalSince1970 && UserDefaults.standard.integer(forKey: "stepCurrent") == 0 {
                 
-                for recipeSelected2 in store.recipesSelected {
-                    recipeSelected2.servingTime = store.earliestPossibleServeTime as NSDate?
-                    store.saveRecipesContext()
+                    for recipeSelected2 in store.recipesSelected {
+                        recipeSelected2.servingTime = store.earliestPossibleServeTime as NSDate?
+                        store.saveRecipesContext()
+                    }
                 }
+                self.servingTimeValue = myFormatter.string(from: recipeSelected.servingTime as! Date)
+                self.servingTimeValue = "Serving Time: " + self.servingTimeValue
             }
-            self.servingTimeValue = myFormatter.string(from: recipeSelected.servingTime as! Date)
-            self.servingTimeValue = "Serving Time: " + self.servingTimeValue
         }
         
         // configure controls
@@ -89,7 +91,7 @@ class MyMenuView: UIView, UITableViewDelegate, UITableViewDataSource, MyMenuTabl
         
         // constrain the controls
         self.toolbar.bottomAnchor.constraint(equalTo: self.bottomAnchor).isActive = true
-        self.toolbar.barTintColor = UIColor(named: UIColor.ColorName(rawValue: UIColor.ColorName.headingbackground.rawValue)!)
+        self.toolbar.barTintColor = UIColor(named: .headingbackground)
         self.toolbar.widthAnchor.constraint(equalTo: self.widthAnchor).isActive = true
         self.toolbar.translatesAutoresizingMaskIntoConstraints = false
         
@@ -99,7 +101,7 @@ class MyMenuView: UIView, UITableViewDelegate, UITableViewDataSource, MyMenuTabl
         self.servingTimeView.rightAnchor.constraint(equalTo: self.rightAnchor).isActive = true
         self.servingTimeView.heightAnchor.constraint(equalToConstant: 48).isActive = true
         self.servingTimeView.translatesAutoresizingMaskIntoConstraints = false
-        self.servingTimeView.backgroundColor = UIColor(named: UIColor.ColorName(rawValue: UIColor.ColorName.deepPurple.rawValue)!)
+        self.servingTimeView.backgroundColor = UIColor(named: .deepPurple)
         
         // define servingTimeView
         self.servingTimeField.font = UIFont(name: Constants.appFont.regular.rawValue, size: CGFloat(Constants.fontSize.xsmall.rawValue))
@@ -118,7 +120,7 @@ class MyMenuView: UIView, UITableViewDelegate, UITableViewDataSource, MyMenuTabl
         
         // define startCookingTime
         self.startCookingTimeField.font = UIFont(name: Constants.appFont.regular.rawValue, size: CGFloat(Constants.fontSize.xsmall.rawValue))
-        self.startCookingTimeField.textColor = UIColor(named: UIColor.ColorName(rawValue: UIColor.ColorName.beige.rawValue)!)
+        self.startCookingTimeField.textColor = UIColor(named: .beige)
         self.startCookingTimeField.isUserInteractionEnabled = false
         self.servingTimeView.addSubview(self.startCookingTimeField)
         self.startCookingTimeField.text = "Start Cooking: \(store.startCookingTime)"
@@ -137,9 +139,9 @@ class MyMenuView: UIView, UITableViewDelegate, UITableViewDataSource, MyMenuTabl
         // toolbar
         let spacer = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
         let toolbarButtons = [self.ingredientsButton, spacer, self.clearAllButton, spacer, self.openSingleStepButton]
-        ingredientsButton.tintColor = UIColor(named: UIColor.ColorName(rawValue: UIColor.ColorName.beige.rawValue)!)
-        clearAllButton.tintColor = UIColor(named: UIColor.ColorName(rawValue: UIColor.ColorName.beige.rawValue)!)
-        openSingleStepButton.tintColor = UIColor(named: UIColor.ColorName(rawValue: UIColor.ColorName.beige.rawValue)!)
+        ingredientsButton.tintColor = UIColor(named: .beige)
+        clearAllButton.tintColor = UIColor(named: .beige)
+        openSingleStepButton.tintColor = UIColor(named: .beige)
         
         self.toolbar.setItems(toolbarButtons, animated: false)
         
@@ -206,7 +208,7 @@ class MyMenuView: UIView, UITableViewDelegate, UITableViewDataSource, MyMenuTabl
     }
     
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
     }
     
     // onClick table cell go to recipe
@@ -254,15 +256,17 @@ class MyMenuView: UIView, UITableViewDelegate, UITableViewDataSource, MyMenuTabl
     func getBackgroundImage(recipe: Recipe, imageView: UIImageView, view: UIView) {
         // The tableview cells crop images nicely when they are background images. This function gets a background image, stores it in the object and then sets it on the imageView that was passed in.
         if let imageURL = recipe.imageURL {
-            let imageUrl:URL = URL(string: imageURL)!
-            // Start background thread so that image loading does not make app unresponsive
-            DispatchQueue.global(qos: .userInitiated).async {
-                if let imageData = NSData(contentsOf: imageUrl) {
-                    // When from background thread, UI needs to be updated on main_queue
-                    DispatchQueue.main.async {
-                        imageView.backgroundColor = UIColor(patternImage: UIImage(data: imageData as Data)!)
-                        view.addSubview(imageView)
-                        view.sendSubview(toBack: imageView)
+            if let url = URL(string: imageURL) {
+                let imageUrl:URL = url
+                // Start background thread so that image loading does not make app unresponsive
+                DispatchQueue.global(qos: .userInitiated).async {
+                    if let imageData = NSData(contentsOf: imageUrl) {
+                        // When from background thread, UI needs to be updated on main_queue
+                        DispatchQueue.main.async {
+                            imageView.backgroundColor = UIColor(patternImage: UIImage(data: imageData as Data)!)
+                            view.addSubview(imageView)
+                            view.sendSubview(toBack: imageView)
+                        }
                     }
                 }
             }
@@ -283,9 +287,13 @@ extension String {
         
         switch separatedNum.count {
         case 2:
-            totalMinutes += handleMinutesOnly!
+            if let handleMinutesOnly = handleMinutesOnly {
+                totalMinutes += handleMinutesOnly
+            }
         case 3:
-            totalMinutes += ((handleHours! * 60) + (handleMinutesWithHours!))
+            if let handleMinutesWithHours = handleMinutesWithHours, let handleHours = handleHours {
+                totalMinutes += ((handleHours * 60) + (handleMinutesWithHours))
+            }
         default:
             print("error")
         }
@@ -302,9 +310,13 @@ extension String {
         
         switch separatedNum.count {
         case 2:
-            totalMinutes += handleMinutesOnly!
+            if let handleMinutesOnly = handleMinutesOnly {
+                totalMinutes += handleMinutesOnly
+            }
         case 3:
-            totalMinutes += ((handleHours! * 60) - (handleMinutesWithHours!))
+            if let handleMinutesWithHours = handleMinutesWithHours, let handleHours = handleHours {
+                totalMinutes += ((handleHours * 60) - (handleMinutesWithHours))
+            }
         default:
             print("error")
         }

@@ -18,7 +18,7 @@ class TraditionalRecipeView: UIView {
     var combinedSteps: String = String()
     var combinedIngredients: String = String()
     var totalTime: Int = 0
-    var gradientView : GradientView!
+    var gradientView = GradientView()
     var totalTimeString = String()
     
     var myScrollView = UIScrollView()
@@ -31,7 +31,7 @@ class TraditionalRecipeView: UIView {
     }
     
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
     }
     
     func getStepsandIngredients() {
@@ -41,21 +41,23 @@ class TraditionalRecipeView: UIView {
         CheftyAPIClient.getStepsAndIngredients(recipe: recipe) {
             
             guard let recipeStep = recipe.steps else { return }
-            var steps = recipeStep.allObjects as! [Step]
-            steps = steps.sorted(by: { $0.timeToStart < $1.timeToStart } )
+            let steps = recipeStep.allObjects as? [Step]
+            if let steps = steps {
+                let stepsSorted = steps.sorted(by: { $0.timeToStart < $1.timeToStart } )
             
-            for step in steps {
-                guard let procedure = step.procedure else { return }
-                self.stepsArray.append(procedure)
-                self.totalTime += Int(step.duration)
-                guard let stepIngredient = step.ingredients else { return }
-                let ingredientsPerStep = stepIngredient.allObjects as! [Ingredient]
+                for step in stepsSorted {
+                    guard let procedure = step.procedure else { return }
+                    self.stepsArray.append(procedure)
+                    self.totalTime += Int(step.duration)
+                    guard let stepIngredient = step.ingredients else { return }
+                    let ingredientsPerStep = stepIngredient.allObjects as? [Ingredient]
                 
-                if ingredientsPerStep.isEmpty == false {
+                    if let ingredientsPerStep = ingredientsPerStep {
                     
-                    for ingredient in ingredientsPerStep {
-                        guard let ingredientDescription = ingredient.ingredientDescription else { return }
-                        self.ingredientsArray.append(ingredientDescription)
+                        for ingredient in ingredientsPerStep {
+                            guard let ingredientDescription = ingredient.ingredientDescription else { return }
+                            self.ingredientsArray.append(ingredientDescription)
+                        }
                     }
                 }
             }
@@ -104,9 +106,11 @@ class TraditionalRecipeView: UIView {
         bgView.heightAnchor.constraint(equalTo: myScrollView.heightAnchor, multiplier: 0.6).isActive = true
         
         // grab image from URL
-        let imageURL = URL(string: recipe.imageURL!)
-        myImageView.sd_setImage(with: imageURL!)
-        self.sendSubview(toBack: myImageView)
+        if let imageURLString = recipe.imageURL {
+            let imageURL = URL(string: imageURLString)
+            myImageView.sd_setImage(with: imageURL)
+            self.sendSubview(toBack: myImageView)
+        }
         
         //RECIPE TITLE
         //create title label

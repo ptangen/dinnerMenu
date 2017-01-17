@@ -18,8 +18,8 @@ class MyMenuTableViewCell: UITableViewCell, UITextFieldDelegate {
     
     var store = DataStore.sharedInstance
     weak var delegate: MyMenuTableViewCellDelegate?
-    var gradientView: GradientView!
-    var gradientViewLeftToRight: GradientViewLeftToRight!
+    var gradientView = GradientView()
+    var gradientViewLeftToRight = GradientViewLeftToRight()
     var recipeDescField:UITextField = UITextField()
     var imageViewInst:UIImageView = UIImageView()
     let deleteButton: UIButton = UIButton(type: .roundedRect)
@@ -28,7 +28,9 @@ class MyMenuTableViewCell: UITableViewCell, UITextFieldDelegate {
 
     override func setSelected(_ selected: Bool, animated: Bool) { super.setSelected(selected, animated: animated) }
 
-    required init(coder aDecoder: NSCoder) { fatalError("init(coder:)") }
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+    }
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)

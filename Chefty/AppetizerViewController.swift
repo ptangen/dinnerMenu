@@ -11,7 +11,7 @@ import UIKit
 class AppetizerViewController: UIViewController {
 
     var store = DataStore.sharedInstance
-    var collectionView: UICollectionView!
+    var collectionView = UICollectionView()
     
     override func viewDidLoad() {
         super.viewDidLoad()

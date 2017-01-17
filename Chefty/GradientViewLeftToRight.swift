@@ -36,8 +36,10 @@ class GradientViewLeftToRight: UIView {
         
         let myStartPoint = CGPoint(x: bounds.maxX, y: bounds.midY)
         let myEndPoint = CGPoint(x: bounds.midX, y: bounds.midY)
-        myContext?.drawLinearGradient(myGradient!, start: myStartPoint,
+        if let myGradient = myGradient {
+            myContext?.drawLinearGradient(myGradient, start: myStartPoint,
                                       end: myEndPoint, options: .drawsAfterEndLocation)
+        }
         
     }
     

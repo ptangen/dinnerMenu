@@ -10,7 +10,7 @@ import UIKit
 
 class SingleStepViewController: UIViewController, SingleStepDelegate {
     
-    var singleStepViewInst: SingleStepView!
+    var singleStepViewInst = SingleStepView()
     let store = DataStore.sharedInstance
 
     override func viewDidLoad(){

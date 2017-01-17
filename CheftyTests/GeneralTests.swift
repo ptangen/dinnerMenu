@@ -86,16 +86,16 @@ class APITests: XCTestCase {
         var stepCount = Int()
     
         // fetch the steps and ingredients
-        CheftyAPIClient.getStepsAndIngredients(recipe: recipeForTesting!) {
-            
-            stepCount = (recipeForTesting?.steps?.count)!
-            expectationResult.fulfill()
-            
-        }
-        waitForExpectations(timeout: 10, handler: nil)
-        XCTAssert(stepCount == 15) // apple-pie stepCount = 15
-        
         if let recipeForTesting = recipeForTesting {
+            CheftyAPIClient.getStepsAndIngredients(recipe: recipeForTesting) {
+            
+                stepCount = (recipeForTesting.steps?.count)!
+                expectationResult.fulfill()
+            
+            }
+            waitForExpectations(timeout: 10, handler: nil)
+            XCTAssert(stepCount == 15) // apple-pie stepCount = 15
+        
             var steps = recipeForTesting.steps?.allObjects as! [Step]
             steps = steps.sorted(by: { $0.timeToStart < $1.timeToStart } )
             let ingredientsFirstStepCount = steps.first?.ingredients?.allObjects.count

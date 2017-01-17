@@ -38,14 +38,17 @@ class DataStore {
     
     func populateHomeArrays () {
         for recipe in recipes {
-            switch recipe.type! {
+            if let recipeType = recipe.type {
                 
-            case "main" : self.main.append(recipe)
-            case "appetizer" : self.appetizer.append(recipe)
-            case "side" : self.sides.append(recipe)
-            case "dessert" : self.desserts.append(recipe)
-            default: break
+                switch recipeType {
                 
+                case "main" : self.main.append(recipe)
+                case "appetizer" : self.appetizer.append(recipe)
+                case "side" : self.sides.append(recipe)
+                case "dessert" : self.desserts.append(recipe)
+                default: break
+                
+                }
             }
         }
     }
@@ -76,7 +79,8 @@ class DataStore {
                 // Replace this implementation with code to handle the error appropriately.
                 // fatalError() causes the application to generate a crash log and terminate. You should not use this function in a shipping application, although it may be useful during development.
                 let nserror = error as NSError
-                fatalError("Unresolved error \(nserror), \(nserror.userInfo)")
+                NSLog("Unresolved error \(nserror), \(nserror.userInfo)")
+                abort()
             }
         }
     }
@@ -148,11 +152,15 @@ class DataStore {
             
             CheftyAPIClient.getStepsAndIngredients(recipe: singleRecipe, completion: {
                 
-                let allRecipeSteps = singleRecipe.steps!.allObjects as! [Step]
-                self.recipeSteps += allRecipeSteps
+                if let steps = singleRecipe.steps {
+                    let allRecipeSteps = steps.allObjects as? [Step]
+                    if let allRecipeSteps = allRecipeSteps {
+                        self.recipeSteps += allRecipeSteps
+                    }
                 
-                if index == (self.recipesSelected.count - 1) {
-                    completion()
+                    if index == (self.recipesSelected.count - 1) {
+                        completion()
+                    }
                 }
             })
         }

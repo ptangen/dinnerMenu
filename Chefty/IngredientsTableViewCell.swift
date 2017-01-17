@@ -14,8 +14,8 @@ class IngredientsTableViewCell: UITableViewCell {
     let uncheckedBox: UIImage = UIImage()
     let checkedBox: UIImage = UIImage()
     
-    required init(coder aDecoder: NSCoder) {
-        fatalError("init(coder:)")
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
     }
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {

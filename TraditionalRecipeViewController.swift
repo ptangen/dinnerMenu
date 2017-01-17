@@ -12,10 +12,10 @@ class TraditionalRecipeViewController: UIViewController {
     
     var traditionalRecipeView: TraditionalRecipeView!
     var recipe: Recipe?
-    var addToMenuButton : UIBarButtonItem!
-    var removeFromMenuButton : UIBarButtonItem!
-    var cameFromVC : String!
-    let labelFont : UIFont = UIFont(name: Constants.appFont.regular.rawValue, size: CGFloat(Constants.fontSize.xsmall.rawValue))!
+    var addToMenuButton = UIBarButtonItem()
+    var removeFromMenuButton = UIBarButtonItem()
+    var cameFromVC = String()
+    let labelFont: UIFont = UIFont(name: Constants.appFont.regular.rawValue, size: CGFloat(Constants.fontSize.xsmall.rawValue))!
     var isSelected = false
     var store = DataStore.sharedInstance
     
@@ -44,10 +44,12 @@ class TraditionalRecipeViewController: UIViewController {
         self.removeFromMenuButton.setTitleTextAttributes(attributesNormal, for: .normal)
         
         // set the add/remove button
-        if store.recipesSelected.contains(recipe!) {
-            navigationItem.rightBarButtonItem = self.removeFromMenuButton
-        } else {
-            navigationItem.rightBarButtonItem = self.addToMenuButton
+        if let recipe = recipe {
+            if store.recipesSelected.contains(recipe) {
+                navigationItem.rightBarButtonItem = self.removeFromMenuButton
+            } else {
+                navigationItem.rightBarButtonItem = self.addToMenuButton
+            }
         }
         
         // set style on title
@@ -70,8 +72,10 @@ class TraditionalRecipeViewController: UIViewController {
     }
     
     override func loadView(){
-        self.traditionalRecipeView = TraditionalRecipeView(frame: CGRect.zero, recipe: recipe!)
-        self.view = self.traditionalRecipeView
+        if let recipe = recipe {
+            self.traditionalRecipeView = TraditionalRecipeView(frame: CGRect.zero, recipe: recipe)
+            self.view = self.traditionalRecipeView
+        }
     }
     
     func onClickDeleteAction() {

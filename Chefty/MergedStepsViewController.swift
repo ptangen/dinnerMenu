@@ -23,7 +23,7 @@ class MergedStepsViewController: UIViewController, UITableViewDataSource, UITabl
         let selectRecipeButton = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(goToSingleStep))
         navigationItem.leftBarButtonItems = [selectRecipeButton]
         
-        let labelFont : UIFont = UIFont(name: Constants.appFont.regular.rawValue, size: CGFloat(Constants.fontSize.xsmall.rawValue))!
+        let labelFont: UIFont = UIFont(name: Constants.appFont.regular.rawValue, size: CGFloat(Constants.fontSize.xsmall.rawValue))!
         let attributesNormal = [ NSFontAttributeName : labelFont ]
         selectRecipeButton.setTitleTextAttributes(attributesNormal, for: .normal)
         self.tableView.backgroundColor = UIColor(red: 215/255, green: 210/255, blue: 185/255, alpha: 1.0)
@@ -56,7 +56,9 @@ class MergedStepsViewController: UIViewController, UITableViewDataSource, UITabl
             cell.backgroundColor = UIColor(red: 215/255, green: 210/255, blue: 185/255, alpha: 1.0)
             cell.textLabelInst.font = UIFont(name: Constants.appFont.light.rawValue, size: 21)
         }
-        self.getImage(recipe: store.mergedStepsArray[indexPath.row].recipe!, imageView: cell.imageViewInst, view: cell)
+        if let recipe = store.mergedStepsArray[indexPath.row].recipe {
+            self.getImage(recipe: recipe, imageView: cell.imageViewInst, view: cell)
+        }
         return cell
     }
     
@@ -80,7 +82,7 @@ class MergedStepsViewController: UIViewController, UITableViewDataSource, UITabl
         let myLabel = UILabel()
         self.view.addSubview(myLabel)
         
-        myView.backgroundColor = UIColor(named: UIColor.ColorName(rawValue: UIColor.ColorName.deepPurple.rawValue)!)
+        myView.backgroundColor = UIColor(named: .deepPurple)
         myView.translatesAutoresizingMaskIntoConstraints = false
         myView.widthAnchor.constraint(equalTo: self.view.widthAnchor, multiplier: 1.0).isActive = true
         myView.heightAnchor.constraint(equalToConstant: 90).isActive = true
@@ -107,8 +109,10 @@ class MergedStepsViewController: UIViewController, UITableViewDataSource, UITabl
         if let imageURLString = recipe.imageURLSmall {
             let url = URL(string: imageURLString)
             imageView.contentMode = .scaleAspectFit
-            imageView.sd_setImage(with: url!)
-            view.addSubview(imageView)
+            if let url = url {
+                imageView.sd_setImage(with: url)
+                view.addSubview(imageView)
+            }
         }
     }
     
