@@ -25,9 +25,13 @@ class APITests: XCTestCase {
     }
     
     func testVerifyRecipeCreation() {
-        // must run the app before running this test
-        XCTAssert(self.store.recipes.count == 15)
-        XCTAssertNotNil(self.store.recipes[0].servings)
+        print("self.store.recipes.count: \(self.store.recipes.count)")
+       if self.store.recipes.count == 0 {
+            XCTFail("No recipe found. Run the build and then run the test again.")
+        } else {
+            XCTAssert(self.store.recipes.count > 0)
+            XCTAssertNotNil(self.store.recipes[0].servings)
+        }
     }
     
     func testRecipeProperties() {
@@ -43,6 +47,8 @@ class APITests: XCTestCase {
         // test for the properties
         if let recipeForTesting = recipeForTesting {
             XCTAssert(recipeForTesting.servings == "6-8")
+        } else {
+            XCTFail("The apple pie recipe was not found in the datastore. Run the build and then run the test again.")
         }
     }
     
@@ -81,25 +87,52 @@ class APITests: XCTestCase {
                 break
             }
         }
-        
-        let expectationResult = expectation(description: "Wait for steps to be returned from API.")
+
         var stepCount = Int()
-    
-        // fetch the steps and ingredients
-        if let recipeForTesting = recipeForTesting {
-            CheftyAPIClient.getStepsAndIngredients(recipe: recipeForTesting) {
-            
-                stepCount = (recipeForTesting.steps?.count)!
-                expectationResult.fulfill()
-            
-            }
-            waitForExpectations(timeout: 10, handler: nil)
-            XCTAssert(stepCount == 15) // apple-pie stepCount = 15
         
-            var steps = recipeForTesting.steps?.allObjects as! [Step]
-            steps = steps.sorted(by: { $0.timeToStart < $1.timeToStart } )
-            let ingredientsFirstStepCount = steps.first?.ingredients?.allObjects.count
-            XCTAssert(ingredientsFirstStepCount == 4) // the first step of apple pie has 4 ingredients
+        if let recipeForTesting = recipeForTesting {
+            if let steps = recipeForTesting.steps {
+                stepCount = steps.count
+            }
+        }
+
+        // fetch the steps and ingredients
+       
+        if let recipeForTesting = recipeForTesting {
+            if stepCount == 0 {
+                let testStepsAndIngredientsExpectation = expectation(description: "Get steps for the recipe from API.")
+                CheftyAPIClient.getStepsAndIngredients(recipe: recipeForTesting) {
+                    
+                    if let steps = recipeForTesting.steps {
+                        stepCount = steps.count
+                    }
+
+                    XCTAssert(stepCount == 15) // apple-pie stepCount = 15
+                    testStepsAndIngredientsExpectation.fulfill()
+
+                    var steps = recipeForTesting.steps?.allObjects as! [Step]
+                    steps = steps.sorted(by: { $0.timeToStart < $1.timeToStart } )
+                    
+                    if let stepFirstUnwrapped = steps.first {
+                        if let ingredientsFirstUnwrapped = stepFirstUnwrapped.ingredients {
+                            let ingredientSteps: [Ingredient] = ingredientsFirstUnwrapped.allObjects as! [Ingredient]
+                            XCTAssert(ingredientSteps.count == 4) // the first step of apple pie has 4 ingredients
+                        }
+                    }
+                }
+                waitForExpectations(timeout: 10) { error in
+                    if let error = error {
+                        XCTFail("testStepsAndIngredientsExpectation waitForExpectationsWithTimeout errored: \(error)")
+                    }
+                }
+            } else {
+                stepCount = (recipeForTesting.steps?.count)!
+                XCTAssert(stepCount == 15) // apple-pie stepCount = 15
+                var steps = recipeForTesting.steps?.allObjects as! [Step]
+                steps = steps.sorted(by: { $0.timeToStart < $1.timeToStart } )
+                let ingredientsFirstStepCount = steps.first?.ingredients?.allObjects.count
+                XCTAssert(ingredientsFirstStepCount == 4) // the first step of apple pie has 4 ingredients
+            }
         }
     }
 }

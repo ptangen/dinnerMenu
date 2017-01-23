@@ -39,6 +39,7 @@ class CheftyAPIClient {
                             }
                         }
                         store.populateHomeArrays()
+                        //print("completion()")
                         completion()
                     } catch {
                         print("An error occured when creating responseJSON")
